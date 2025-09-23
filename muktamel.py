@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import pandas as pd
 
-url = "https://www.amakkn.com/search-map/3/all/24.716199523004914/46.671776478222675/default/11/1"
+url = "https://www.muktamel.com/%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA-%D9%84%D9%84%D8%A8%D9%8A%D8%B9/%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D8%A9/"
 driver = webdriver.Chrome()
 driver.get(url)
 
@@ -13,47 +13,17 @@ driver.get(url)
 wait = WebDriverWait(driver, 10)
 
 try:
-    
-    # Click the toggle (Mui Switch) to change view/state
-    try:
-        toggle = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, ".MuiSwitch-root.MuiSwitch-sizeMedium.css-6raxet"))
-        )
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", toggle)
-        try:
-            toggle.click()
-        except Exception:
-            driver.execute_script("arguments[0].click();", toggle)
-        time.sleep(1)
-        print("Toggled the switch successfully.")
-    except Exception as e:
-        print(f"Could not toggle switch via CSS selector: {str(e)}")
-        # Fallback using XPath contains on class tokens
-        try:
-            toggle_xpath = "//div[contains(@class,'MuiSwitch-root')][contains(@class,'MuiSwitch-sizeMedium')][contains(@class,'css-6raxet')]"
-            toggle = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, toggle_xpath))
-            )
-            try:
-                toggle.click()
-            except Exception:
-                driver.execute_script("arguments[0].click();", toggle)
-            time.sleep(1)
-            print("Toggled the switch via XPath.")
-        except Exception as e2:
-            print(f"Fallback toggle failed: {str(e2)}")
-    
     # Find all property ad links on the page
-    ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/en/property/']")
+    ad_links = driver.find_elements(By.CSS_SELECTOR, "a.item-link")
     
     # If the above doesn't work, try alternative selectors
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/property/']")
+        ad_links = driver.find_elements(By.CSS_SELECTOR, "div.d-flex flex-column")
     
     # Another fallback selector
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, ".property-card a, .listing-item a")
-    
+        ad_links = driver.find_elements(By.CSS_SELECTOR, "h2.price text-red d-flex align-items-end order-0")
+
     print(f"Found {len(ad_links)} ad links on the page")
     
     # Extract unique URLs to avoid opening the same ad multiple times

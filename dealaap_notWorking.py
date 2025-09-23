@@ -14,40 +14,16 @@ wait = WebDriverWait(driver, 10)
 
 try:
     # Find all property ad links on the page
-    # Try various selectors for DealApp real estate page
-    ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/ar/property/']")
+    # Bayut typically uses these selectors for property links
+    ad_links = driver.find_elements(By.CSS_SELECTOR, "a.ad-card-main-container ad-card-promoted")
     
     # If the above doesn't work, try alternative selectors
     if not ad_links:
         ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/property/']")
     
-    # Another fallback selector for property cards
+    # Another fallback selector
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, ".property-card a, .listing-item a, .card a")
-    
-    # More generic selectors for property links
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='property']")
-    
-    # Try to find any links that might be property ads
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='deal']")
-    
-    # Additional selectors for DealApp structure
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, ".item a, .product a, .listing a")
-    
-    # More specific selectors for real estate listings
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='عقارات']")
-    
-    # Try to find any clickable elements that might be property ads
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='إعلان']")
-    
-    # Last resort - find any links on the page
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href]")
+        ad_links = driver.find_elements(By.CSS_SELECTOR, ".property-card a, .listing-item a")
     
     print(f"Found {len(ad_links)} ad links on the page")
     

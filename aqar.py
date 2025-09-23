@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import pandas as pd
 
-url = "https://www.propertyfinder.sa/ar/search?c=1&fu=0&ob=mr"
+url = "https://sa.aqar.fm/"
 driver = webdriver.Chrome()
 driver.get(url)
 
@@ -13,35 +13,34 @@ driver.get(url)
 wait = WebDriverWait(driver, 10)
 
 try:
-    # Find all property ad links on the page
-    ad_links = driver.find_elements(By.CSS_SELECTOR, ".styles_desktop__wrapper__J5FRH a")
-    
-    # If the above doesn't work, try alternative selectors
+    # Find ad anchors inside the list container
+    ad_links = driver.find_elements(By.CSS_SELECTOR, "div._list__Ka30R a[href]")
+
+    # If the above doesn't work, try alternative selectors within cards
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a.styles-module_property-card__link__r--GK")
-    
-    # Another fallback selector
-    if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "div[role='link'] a")
+        ad_links = driver.find_elements(By.CSS_SELECTOR, "div._listingCard__PoR_B a[href], div._content__W4gas a[href]")
 
     print(f"Found {len(ad_links)} ad links on the page")
-    
-    # Extract unique URLs to avoid opening the same ad multiple times
-    unique_urls = set()
-    for link in ad_links:
-        href = link.get_attribute('href')
+
+    # Normalize hrefs (preserve order, no deduplication)
+    base_url = "https://sa.aqar.fm"
+    hrefs = []
+    for el in ad_links:
+        href = el.get_attribute('href')
         if href:
-            unique_urls.add(href)
+            if href.startswith('/'):
+                href = base_url + href
+            hrefs.append(href)
     
-    print(f"Found {len(unique_urls)} unique ads to visit")
+    print(f"Found {len(hrefs)} ads to visit")
     
     # Store the main window handle
     main_window = driver.current_window_handle
     
-    # Loop through each unique URL
-    for i, url in enumerate(unique_urls):
+    # Loop through each ad href sequentially
+    for i, url in enumerate(hrefs):
         try:
-            print(f"Opening ad {i+1}/{len(unique_urls)}")
+            print(f"Opening ad {i+1}/{len(hrefs)}")
             
             # Open link in new tab
             driver.execute_script("window.open(arguments[0], '_blank');", url)

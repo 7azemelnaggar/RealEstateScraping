@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import pandas as pd
 
-url = "https://sa.aqar.fm/"
+url = "https://www.amakkn.com/search-map/3/all/24.696238181952285/46.51110142939455/default/11/1"
 driver = webdriver.Chrome()
 driver.get(url)
 
@@ -14,30 +14,15 @@ wait = WebDriverWait(driver, 10)
 
 try:
     # Find all property ad links on the page
-    # Wait for the page to load completely
-    time.sleep(3)
-    
-    # Try specific selectors for Aqar property ads
-    ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/property/']")
+    ad_links = driver.find_elements(By.CSS_SELECTOR, "h6.property-name")
     
     # If the above doesn't work, try alternative selectors
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/en/property/']")
+        ad_links = driver.find_elements(By.CSS_SELECTOR, "#tabs_1 > div > div:nth-child(1)")
     
-    # Another fallback selector for property cards
+    # Another fallback selector
     if not ad_links:
-        ad_links = driver.find_elements(By.CSS_SELECTOR, ".property-card a, .listing-item a, .property-item a")
-    
-    # Filter out non-property links (categories, navigation, social media)
-    if ad_links:
-        filtered_links = []
-        for link in ad_links:
-            href = link.get_attribute('href')
-            if href and href.startswith('http') and 'aqar.fm' in href:
-                # Exclude category, navigation, and social media links
-                if not any(exclude in href.lower() for exclude in ['category', 'categories', 'search', 'filter', 'location', 'city', 'region', 'type', 'price', 'size', 'bedroom', 'bathroom', 'facebook', 'twitter', 'instagram', 'linkedin', 'youtube', 'whatsapp', 'telegram', 'login', 'signin', 'sign-in', 'register', 'auth', 'user', 'account', 'profile', 'dashboard', 'admin', 'contact', 'about', 'help', 'support', 'terms', 'privacy', 'policy', 'mailto:', 'tel:', 'javascript:']):
-                    filtered_links.append(link)
-        ad_links = filtered_links[:20]  # Limit to 20 property ads
+        ad_links = driver.find_elements(By.CSS_SELECTOR, ".property-card a, .listing-item a")
     
     print(f"Found {len(ad_links)} ad links on the page")
     
