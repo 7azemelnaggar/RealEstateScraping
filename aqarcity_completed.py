@@ -162,5 +162,5 @@ finally:
     driver.quit()
     
 df = pd.DataFrame(data)
-df.to_csv("aqarcitypg2.csv", index=False, encoding="utf-8-sig")
+df.to_csv("aqarcity.csv", index=False, encoding="utf-8-sig")
 print("Data saved to aqarcity.csv")
